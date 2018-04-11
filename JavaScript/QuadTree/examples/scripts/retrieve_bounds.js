@@ -98,13 +98,20 @@ function initPoints()
 function onMouseUp(e)
 {
 	var points = quad.retrieve({
-								x:e.stageX, 
-								y:e.stageY, 
-								width:50,
-								height:25
+		x:e.stageX, 
+		y:e.stageY, 
+		width:50,
+		height:25
 	});
 	
 	renderPoints(points);
+	var g = pointShape.graphics;
+	g.drawRect(
+	e.stageX, 
+	e.stageY, 
+	50,
+	25);
+	stage.update();
 	//renderQuad();
 }
 
