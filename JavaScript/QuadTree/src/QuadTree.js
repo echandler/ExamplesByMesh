@@ -335,45 +335,46 @@
     };
 
     BoundsNode.prototype.retrieve = function (item) {
-        var out = this._out;
+        var out = []; //this._out;
         out.length = 0;
         if (this.nodes.length) {
             var index = this._findIndex(item);
             var node = this.nodes[index];
 
-            if (item.x >= node._bounds.x &&
-                    item.x + item.width <= node._bounds.x + node._bounds.width &&
-                    item.y >= node._bounds.y &&
-                    item.y + item.height <= node._bounds.y + node._bounds.height) {
+            if (item.x  + item.width >= node._bounds.x &&
+                    item.x <= node._bounds.x + node._bounds.width &&
+                    item.y + item.height >= node._bounds.y &&
+                    item.y  <= node._bounds.y + node._bounds.height) {
                 
-                out.push.apply(out, this.nodes[index].retrieve(item));
-            } else {
-                //Part of the item are overlapping multiple child nodes. For each of the overlapping nodes, return all containing objects.
+                [].push.apply(out, this.nodes[index].retrieve(item));
+            } 
+			
+            if (item.x  + item.width >= this.nodes[Node.TOP_RIGHT]._bounds.x &&
+                item.x <= this.nodes[Node.TOP_RIGHT]._bounds.x + this.nodes[Node.TOP_RIGHT]._bounds.width &&
+                item.y + item.height >= this.nodes[Node.TOP_RIGHT]._bounds.y &&
+                item.y  <= this.nodes[Node.TOP_RIGHT]._bounds.y + this.nodes[Node.TOP_RIGHT]._bounds.height) {
+                
+                out.push.apply(out, this.nodes[Node.TOP_RIGHT].retrieve(item));
+            }
 
-                if (item.x <= this.nodes[Node.TOP_RIGHT]._bounds.x) {
-                    if (item.y <= this.nodes[Node.BOTTOM_LEFT]._bounds.y) {
-                        out.push.apply(out, this.nodes[Node.TOP_LEFT].getAllContent());
-                    }
-                    
-                    if (item.y + item.height > this.nodes[Node.BOTTOM_LEFT]._bounds.y) {
-                        out.push.apply(out, this.nodes[Node.BOTTOM_LEFT].getAllContent());
-                    }
-                }
+            if (item.x  + item.width >= this.nodes[Node.BOTTOM_RIGHT]._bounds.x &&
+                item.x <= this.nodes[Node.BOTTOM_RIGHT]._bounds.x + this.nodes[Node.BOTTOM_RIGHT]._bounds.width &&
+                item.y + item.height >= this.nodes[Node.BOTTOM_RIGHT]._bounds.y &&
+                item.y  <= this.nodes[Node.BOTTOM_RIGHT]._bounds.y + this.nodes[Node.BOTTOM_RIGHT]._bounds.height) {
                 
-                if (item.x + item.width > this.nodes[Node.TOP_RIGHT]._bounds.x) {//position+width bigger than middle x
-                    if (item.y <= this.nodes[Node.BOTTOM_RIGHT]._bounds.y) {
-                        out.push.apply(out, this.nodes[Node.TOP_RIGHT].getAllContent());
-                    }
-                    
-                    if (item.y + item.height > this.nodes[Node.BOTTOM_RIGHT]._bounds.y) {
-                        out.push.apply(out, this.nodes[Node.BOTTOM_RIGHT].getAllContent());
-                    }
-                }
+                out.push.apply(out, this.nodes[Node.BOTTOM_RIGHT].retrieve(item));
+            }
+
+            if (item.x  + item.width >= this.nodes[Node.BOTTOM_LEFT]._bounds.x &&
+                    item.x <= this.nodes[Node.BOTTOM_LEFT]._bounds.x + this.nodes[Node.BOTTOM_LEFT]._bounds.width &&
+                    item.y + item.height >= this.nodes[Node.BOTTOM_LEFT]._bounds.y &&
+                    item.y  <= this.nodes[Node.BOTTOM_LEFT]._bounds.y + this.nodes[Node.BOTTOM_LEFT]._bounds.height) {
+                
+                out.push.apply(out, this.nodes[Node.BOTTOM_LEFT].retrieve(item));
             }
         }
-
-        out.push.apply(out, this._stuckChildren);
-        out.push.apply(out, this.children);
+       // [].push.apply(out, this._stuckChildren);
+        [].push.apply(out, this.children);
 
         return out;
     };
